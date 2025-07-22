@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Bharath</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <style>
+        /* ========== GLOBAL STYLES FROM ABOUT PAGE ========== */
+        /* Modern Color Theme */
+        :root {
+            --primary: #2a9d8f; /* Teal */
+            --secondary: #264653; /* Dark blue */
+            --accent: #e9c46a; /* Gold */
+            --light: #f4f9f9;
+            --dark: #2b2d42;
+            --text: #333333;
+            --background: #ffffff;
+            --card-bg: #f8f9fa;
+            --success: #4CAF50;
+            --timeline-color: #e0e0e0;
+            --nav-height: 70px;
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--background);
+            overflow-x: hidden;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: var(--background);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: var(--nav-height);
+        }
+
+        .logo-flex {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: 36px;
+            background-color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Buttons */
+        .primary-button {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(42, 157, 143, 0.3);
+            margin-left: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .primary-button:hover {
+            background-color: #217f74; /* Darker primary */
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: flex-end;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 2000;
+        }
+
+        .mobile-menu-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            background: var(--background);
+            width: 70%;
+            max-width: 300px;
+            padding: 2rem;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .mobile-menu-overlay.active .mobile-menu {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--dark);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: color 0.2s;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--primary);
+        }
+
+        /* Section General Styles */
+        section {
+            padding: calc(var(--nav-height) + 3rem) 5% 5rem;
+            background: var(--light);
+            animation: fadeIn 1s ease-in-out; /* Global fade-in for sections */
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            animation: slideInUp 1s ease-out;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* ========== PROJECTS-SPECIFIC STYLES ========== */
+        #projects {
+            padding: 8rem 5% 5rem;
+            background: var(--light);
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+        }
+        
+        .project-card.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .project-image {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+        
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .project-card:hover .project-image img {
+            transform: scale(1.05);
+        }
+        
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 0.35rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 10;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .badge-featured {
+            background: var(--accent);
+            color: var(--dark);
+        }
+        
+        .badge-clone {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .badge-basic {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .project-info {
+            padding: 1.8rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .project-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--secondary);
+            animation: slideInRight 0.4s ease;
+        }
+        
+        .project-duration {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1rem;
+            animation: slideInRight 0.6s ease;
+        }
+        
+        .project-desc {
+            color: #555;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            animation: slideInRight 0.8s ease;
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 1s ease;
+        }
+        
+        .project-tags span {
+            padding: 0.4rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s;
+        }
+        
+        .project-tags span:hover {
+            transform: translateY(-3px);
+        }
+        
+        .tag-html {
+            background: rgba(227, 76, 38, 0.1);
+            color: #e34c26;
+        }
+        
+        .tag-css {
+            background: rgba(38, 77, 228, 0.1);
+            color: #264de4;
+        }
+        
+        .tag-js {
+            background: rgba(240, 219, 79, 0.1);
+            color: #d6bb0d;
+        }
+        
+        .project-links {
+            margin-top: auto;
+            animation: fadeIn 1.2s ease;
+        }
+        
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: gap 0.3s;
+        }
+        
+        .project-link:hover {
+            gap: 0.8rem;
+        }
+
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #FFB800;
+            color: #181818;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(-120%);
+            transition: transform 0.4s;
+            z-index: 1000;
+        }
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+                /* Contact Illustration */
+        .contact-illustration {
+            width: 100%;
+            max-width: 350px;
+            margin: 40px auto 0;
+            display: block;
+            opacity: 0.8;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Form Status Messages */
+        .form-status {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: slideInDown 0.5s ease-out;
+        }
+        
+        .form-status.success {
+            background: rgba(76, 175, 80, 0.15);
+            border: 1px solid var(--success);
+            color: var(--success);
+            display: block;
+        }
+        
+        .form-status.error {
+            background: rgba(230, 57, 70, 0.15);
+            border: 1px solid var(--error);
+            color: var(--error);
+            display: block;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+        
+        .footer-section p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        
+        .footer-social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .social-links a {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            text-decoration: none;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            .login-btn {
+                display: none;
+            }
+            .mobile-menu-button {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .project-info {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav">
+            <div class="logo-flex">
+                <a href="#" class="logo">
+                    <span>Oxelion</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="projects.html" class="active">Projects</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blogs</a>
+                <a href="resource.html">Resource</a>
+            </div>
+            <button class="primary-button login-btn" onclick="window.location.href='auth.html'">Login</button>
+            <button class="mobile-menu-button" id="mobileMenuBtn" aria-label="Open menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay">
+            <div class="mobile-menu">
+                <button class="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="index.html">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="projects.html" class="active">Projects</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blogs</a>
+                <a href="resource.html">Resource</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Redirect Notification -->
+    <div class="notification-toast" id="redirectNotification">
+        You're being redirected to login page
+    </div>
+    
+    <section id="projects">
+        <div class="section-container">
+            <h2 class="section-title">My Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="Portfolio.png" alt="Personal Portfolio Website">
+                        <span class="badge badge-featured"><i class="fas fa-star"></i> Featured</span>
+                    </div>
+                    <div class="project-info">
+                        <h3>Personal Portfolio Website</h3>
+                        <p class="project-duration"><i class="fas fa-calendar-alt"></i> 27 Dec, 2024 - 17 Jun, 2025</p>
+                        <p class="project-desc">I am a dedicated and innovative frontend developer with a strong foundation in HTML, CSS and JavaScript. I specialize in creating responsive, user-friendly interfaces and have a passion for solving complex problems through clean, efficient code.</p>
+                        <div class="project-tags">
+                            <span class="tag-html"><i class="fab fa-html5"></i> HTML</span>
+                            <span class="tag-css"><i class="fab fa-css3-alt"></i> CSS</span>
+                            <span class="tag-js"><i class="fab fa-js"></i> JavaScript</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://the-king-25.github.io/Educoders/" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="Youtube.png" alt="YouTube Clone">
+                        <span class="badge badge-clone"><i class="fas fa-clone"></i> Clone</span>
+                    </div>
+                    <div class="project-info">
+                        <h3>YouTube Clone</h3>
+                        <p class="project-duration"><i class="fas fa-calendar-alt"></i> 04 Dec, 2024 - 20 Dec, 2024</p>
+                        <p class="project-desc">Developed a fully responsive front-end clone of the YouTube homepage using HTML and CSS. The clone replicates key UI components such as the video player layout, sidebar navigation, header bar, and video cards grid. Designed with a mobile-first approach to ensure cross-device compatibility and a clean user experience.</p>
+                        <div class="project-tags">
+                            <span class="tag-html"><i class="fab fa-html5"></i> HTML</span>
+                            <span class="tag-css"><i class="fab fa-css3-alt"></i> CSS</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://the-king-25.github.io/Youtube/" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="Hotel.png" alt="Simple Hotel Website (Basic)">
+                        <span class="badge badge-basic"><i class="fas fa-hotel"></i> Basic</span>
+                    </div>
+                    <div class="project-info">
+                        <h3>Simple Hotel Website (Basic)</h3>
+                        <p class="project-duration"><i class="fas fa-calendar-alt"></i> 09 Nov, 2024 - 14 Nov, 2024</p>
+                        <p class="project-desc">Developed a simple, clean, and responsive static website for a hotel business using HTML and CSS. The site includes key pages such as Home, About, Services, and Contact. Designed with a user-friendly layout to display hotel information, amenities, and contact details, ensuring a seamless browsing experience across desktop and mobile devices.</p>
+                        <div class="project-tags">
+                            <span class="tag-html"><i class="fab fa-html5"></i> HTML</span>
+                            <span class="tag-css"><i class="fab fa-css3-alt"></i> CSS</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://the-king-25.github.io/Hotel/" target="_blank" class="project-link"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Oxelion</h3>
+                <p>Creating innovative solutions for modern web experiences. Focused on performance, accessibility, and user-centered design.</p>
+                <div class="social-links">
+                    <a href="https://github.com/online-in"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/bharath-kumar-gorle-78ba53333"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://x.com/bhara12549"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/_the_king_24._._/"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="index.html">Home</a></p>
+                <p><a href="about.html">About Me</a></p>
+                <p><a href="projects.html">Projects</a></p>
+                <p><a href="blog.html">Blogs</a></p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-envelope"></i> bharathkumargorle1744@gmail.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> Bhimavaram, India</p>
+                <p><i class="fas fa-phone"></i> +91 9876543210</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 Bharath Kumar Gorle. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyATnAziN-i_XuipwmNNL54Uo32Lp6gixIo",
+            authDomain: "personal-project-62960.firebaseapp.com",
+            projectId: "personal-project-62960",
+            storageBucket: "personal-project-62960.appspot.com",
+            messagingSenderId: "764447192852",
+            appId: "1:764447192852:web:185a024bcd9a1a504bf401",
+            measurementId: "G-NXDQT7BF8E"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        
+        // Show redirect notification
+        function showRedirectNotification() {
+            const notification = document.getElementById('redirectNotification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 500);
+            }, 3000);
+        }
+        
+        // Check authentication status
+        auth.onAuthStateChanged(function(user) {
+            if (!user) {
+                showRedirectNotification();
+            }
+        });
+        
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobileMenuBtn');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            
+            // Toggle mobile menu
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.add('active');
+                });
+            }
+            
+            // Close mobile menu
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            }
+            
+            // Close mobile menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            });
+            
+            // Close menu when clicking outside
+            mobileMenuOverlay.addEventListener('click', function(e) {
+                if (e.target === mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.remove('active');
+                }
+            });
+            
+            // Animation for project cards on scroll
+            const projectCards = document.querySelectorAll('.project-card');
+            
+            // Function to check if element is in viewport
+            function isInViewport(element) {
+                const rect = element.getBoundingClientRect();
+                return (
+                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8
+                );
+            }
+            
+            // Animate elements when they come into view
+            function animateOnScroll() {
+                projectCards.forEach((card, index) => {
+                    if (isInViewport(card)) {
+                        setTimeout(() => {
+                            card.classList.add('in-view');
+                        }, index * 150);
+                    }
+                });
+            }
+            
+            // Initial check and scroll event listener
+            animateOnScroll();
+            window.addEventListener('scroll', animateOnScroll);
+        });
+        // Function to update login/logout button
+    function updateAuthButton(user) {
+        const loginButtons = document.querySelectorAll('.login-btn');
+        
+        loginButtons.forEach(button => {
+            if (user) {
+                // User is logged in - show Logout
+                button.textContent = 'Logout';
+                button.onclick = () => {
+                    auth.signOut().then(() => {
+                        window.location.href = 'index.html';
+                    }).catch(error => {
+                        console.error('Sign out error', error);
+                    });
+                };
+            } else {
+                // User is logged out - show Login
+                button.textContent = 'Login';
+                button.onclick = () => {
+                    window.location.href = 'auth.html';
+                };
+            }
+        });
+    }
+    
+    // Check auth state on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        auth.onAuthStateChanged(user => {
+            updateAuthButton(user);
+            
+            // For blog/projects pages - show notification if not logged in
+            if (window.location.pathname.includes('blog.html') || 
+                window.location.pathname.includes('projects.html')) {
+                if (!user) {
+                    const notification = document.getElementById('redirectNotification');
+                    if (notification) {
+                        notification.classList.add('show');
+                        setTimeout(() => {
+                            window.location.href = 'auth.html';
+                        }, 3000);
+                    }
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>

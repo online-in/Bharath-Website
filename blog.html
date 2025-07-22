@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Oxelion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        :root {
+            --primary: #2a9d8f;
+            --secondary: #264653;
+            --accent: #e9c46a;
+            --light: #f4f9f9;
+            --dark: #2b2d42;
+            --text: #333333;
+            --background: #ffffff;
+            --card-bg: #f8f9fa;
+            --success: #4CAF50;
+            --timeline-color: #e0e0e0;
+            --nav-height: 70px;
+            --cyber-color: #2a9d8f;
+            --ai-color: #e76f51;
+            --dev-color: #219ebc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--background);
+            overflow-x: hidden;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: var(--background);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: var(--nav-height);
+        }
+
+        .logo-flex {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: 36px;
+            background-color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .primary-button {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(42, 157, 143, 0.3);
+            margin-left: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .primary-button:hover {
+            background-color: #217f74;
+            transform: translateY(-2px);
+        }
+
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: flex-end;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 2000;
+        }
+
+        .mobile-menu-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            background: var(--background);
+            width: 70%;
+            max-width: 300px;
+            padding: 2rem;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .mobile-menu-overlay.active .mobile-menu {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--dark);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: color 0.2s;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--primary);
+        }
+
+        section {
+            padding: calc(var(--nav-height) + 3rem) 5% 5rem;
+            background: var(--light);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            animation: slideInUp 1s ease-out;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* ========== BLOG STYLES ========== */
+        #blog {
+            padding: 8rem 5% 5rem;
+            background: var(--light);
+        }
+        
+        .category-section {
+            margin-bottom: 5rem;
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+        }
+        
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .cyber .category-icon {
+            background: var(--cyber-color);
+        }
+        
+        .ai .category-icon {
+            background: var(--ai-color);
+        }
+        
+        .dev .category-icon {
+            background: var(--dev-color);
+        }
+        
+        .category-title {
+            font-size: 2rem;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        
+        .category-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .blog-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+        }
+        
+        .blog-card.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .blog-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .blog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .blog-card:hover .blog-image img {
+            transform: scale(1.05);
+        }
+        
+        .blog-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 0.35rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 10;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .cyber .blog-badge {
+            background: var(--cyber-color);
+            color: white;
+        }
+        
+        .ai .blog-badge {
+            background: var(--ai-color);
+            color: white;
+        }
+        
+        .dev .blog-badge {
+            background: var(--dev-color);
+            color: white;
+        }
+        
+        .blog-info {
+            padding: 1.8rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .blog-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            animation: slideInRight 0.4s ease;
+        }
+        
+        .blog-desc {
+            color: #555;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            animation: slideInRight 0.8s ease;
+        }
+        
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 1s ease;
+        }
+        
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: gap 0.3s;
+            animation: fadeIn 1.2s ease;
+        }
+        
+        .read-more:hover {
+            gap: 0.8rem;
+        }
+        
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #FFB800;
+            color: #181818;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(-120%);
+            transition: transform 0.4s;
+            z-index: 1000;
+        }
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+        
+        .footer-section p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        
+        .footer-social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .blog-grid {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            .login-btn {
+                display: none;
+            }
+            .mobile-menu-button {
+                display: block;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .blog-info {
+                padding: 1.5rem;
+            }
+            
+            .category-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav">
+            <div class="logo-flex">
+                <a href="#" class="logo">
+                    <span>Oxelion</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="projects.html">Projects</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html" class="active">Blogs</a>
+                <a href="resource.html">Resource</a>
+            </div>
+            <button class="primary-button login-btn" onclick="window.location.href='auth.html'">Login</button>
+            <button class="mobile-menu-button" id="mobileMenuBtn" aria-label="Open menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay">
+            <div class="mobile-menu">
+                <button class="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="index.html">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="projects.html">Projects</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html" class="active">Blogs</a>
+                <a href="resource.html">Resource</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Redirect Notification -->
+    <div class="notification-toast" id="redirectNotification">
+        You're being redirected to login page
+    </div>
+    
+    <section id="blog">
+        <div class="section-container">
+            <h2 class="section-title">Tech Insights & Articles</h2>
+            
+            <!-- Cybersecurity Section -->
+            <div class="category-section cyber">
+                <div class="category-header">
+                    <div class="category-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="category-title">Cybersecurity & Privacy</h2>
+                        <p class="category-subtitle">Latest insights on digital protection and privacy</p>
+                    </div>
+                </div>
+                
+                <div class="blog-grid">
+                    <!-- Blog Card 1 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1563014959-7aaa83350992?auto=format&fit=crop&q=80&w=1000" alt="Encryption">
+                            <span class="blog-badge">Cybersecurity</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>How Encryption Keeps Our Data Safe</h3>
+                            <p class="blog-desc">Explore the fundamental role of encryption in protecting sensitive data and maintaining privacy in the digital age.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 8 min read</span>
+                                <span><i class="far fa-calendar"></i> May 15, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 2 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1605792657660-596af9009e82?auto=format&fit=crop&q=80&w=1000" alt="Cybersecurity Threats">
+                            <span class="blog-badge">Cybersecurity</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>Top Cybersecurity Threats in 2025</h3>
+                            <p class="blog-desc">Discover the emerging cybersecurity threats that organizations and individuals should prepare for in the coming year.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 10 min read</span>
+                                <span><i class="far fa-calendar"></i> Apr 28, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 3 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1560264280-88b68371db39?auto=format&fit=crop&q=80&w=1000" alt="Ethical Hacking">
+                            <span class="blog-badge">Cybersecurity</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>Ethical Hacking: What Is It and Why It Matters</h3>
+                            <p class="blog-desc">Learn how ethical hackers help organizations identify vulnerabilities before malicious actors can exploit them.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 12 min read</span>
+                                <span><i class="far fa-calendar"></i> Apr 12, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 4 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1677442135722-5f1d4a8a3b7d?auto=format&fit=crop&q=80&w=1000" alt="AI in Cybersecurity">
+                            <span class="blog-badge">Cybersecurity</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>The Role of AI in Modern Cybersecurity</h3>
+                            <p class="blog-desc">How artificial intelligence is revolutionizing threat detection and security operations.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 9 min read</span>
+                                <span><i class="far fa-calendar"></i> Mar 29, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 5 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&q=80&w=1000" alt="Digital Privacy">
+                            <span class="blog-badge">Cybersecurity</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>Why You Should Care About Digital Privacy</h3>
+                            <p class="blog-desc">Understanding the importance of digital privacy and practical steps to protect your online presence.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 7 min read</span>
+                                <span><i class="far fa-calendar"></i> Mar 15, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI & ML Section -->
+            <div class="category-section ai">
+                <div class="category-header">
+                    <div class="category-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div>
+                        <h2 class="category-title">Artificial Intelligence & Machine Learning</h2>
+                        <p class="category-subtitle">Exploring the frontier of intelligent systems</p>
+                    </div>
+                </div>
+                
+                <div class="blog-grid">
+                    <!-- Blog Card 1 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1677442135133-33d364e7d1b1?auto=format&fit=crop&q=80&w=1000" alt="ChatGPT">
+                            <span class="blog-badge">AI & ML</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>How ChatGPT Works: A Beginner's Guide</h3>
+                            <p class="blog-desc">Demystifying the technology behind ChatGPT and how large language models are changing human-computer interaction.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 11 min read</span>
+                                <span><i class="far fa-calendar"></i> Jun 2, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 2 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1677442135699-3d09b4e7b1b9?auto=format&fit=crop&q=80&w=1000" alt="AI Concepts">
+                            <span class="blog-badge">AI & ML</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>The Difference Between AI, ML, and Deep Learning</h3>
+                            <p class="blog-desc">Clarifying the distinctions between these often-confused terms in artificial intelligence.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 8 min read</span>
+                                <span><i class="far fa-calendar"></i> May 22, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 3 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1677442135137-33d364e7d1b1?auto=format&fit=crop&q=80&w=1000" alt="Bias in AI">
+                            <span class="blog-badge">AI & ML</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>Bias in AI: Can Machines Be Fair?</h3>
+                            <p class="blog-desc">Examining the challenge of bias in artificial intelligence systems and the quest for algorithmic fairness.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 14 min read</span>
+                                <span><i class="far fa-calendar"></i> May 8, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 4 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1677442135135-33d364e7d1b1?auto=format&fit=crop&q=80&w=1000" alt="ML Applications">
+                            <span class="blog-badge">AI & ML</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>5 Real-World Applications of Machine Learning</h3>
+                            <p class="blog-desc">From healthcare to finance, discover how machine learning is transforming industries.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 9 min read</span>
+                                <span><i class="far fa-calendar"></i> Apr 18, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 5 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1677442135139-33d364e7d1b1?auto=format&fit=crop&q=80&w=1000" alt="Generative AI">
+                            <span class="blog-badge">AI & ML</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>What's New in Generative AI (2025 Trends)</h3>
+                            <p class="blog-desc">The latest advancements in generative AI and how they're reshaping creative industries.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 10 min read</span>
+                                <span><i class="far fa-calendar"></i> Apr 5, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Software Development Section -->
+            <div class="category-section dev">
+                <div class="category-header">
+                    <div class="category-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div>
+                        <h2 class="category-title">Software Development</h2>
+                        <p class="category-subtitle">Trends, tools, and techniques for developers</p>
+                    </div>
+                </div>
+                
+                <div class="blog-grid">
+                    <!-- Blog Card 1 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000" alt="Programming Languages">
+                            <span class="blog-badge">Development</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>Top Programming Languages to Learn in 2025</h3>
+                            <p class="blog-desc">Which programming languages are most valuable for developers to learn this year? Our comprehensive analysis.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 12 min read</span>
+                                <span><i class="far fa-calendar"></i> Jun 10, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 2 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1555066932-063d74f3dba5?auto=format&fit=crop&q=80&w=1000" alt="Version Control">
+                            <span class="blog-badge">Development</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>Why Version Control (Git) Is a Developer's Best Friend</h3>
+                            <p class="blog-desc">Mastering Git: Essential version control practices every developer should know.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 9 min read</span>
+                                <span><i class="far fa-calendar"></i> May 30, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 3 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1555066931-bf19f8fd6445?auto=format&fit=crop&q=80&w=1000" alt="Open Source">
+                            <span class="blog-badge">Development</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>How to Start Contributing to Open Source</h3>
+                            <p class="blog-desc">A practical guide for developers who want to get involved in open source projects.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 11 min read</span>
+                                <span><i class="far fa-calendar"></i> May 18, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- Blog Card 4 -->
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000" alt="Web Development">
+                            <span class="blog-badge">Development</span>
+                        </div>
+                        <div class="blog-info">
+                            <h3>The Future of Web Development: Frameworks to Watch</h3>
+                            <p class="blog-desc">Emerging frameworks and technologies that are shaping the future of web development.</p>
+                            <div class="blog-meta">
+                                <span><i class="far fa-clock"></i> 10 min read</span>
+                                <span><i class="far fa-calendar"></i> May 5, 2025</span>
+                            </div>
+                            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Oxelion</h3>
+                <p>Creating innovative solutions for modern web experiences. Focused on performance, accessibility, and user-centered design.</p>
+                <div class="social-links">
+                    <a href="https://github.com/online-in"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/bharath-kumar-gorle-78ba53333"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://x.com/bhara12549"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/_the_king_24._._/"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="index.html">Home</a></p>
+                <p><a href="about.html">About Me</a></p>
+                <p><a href="projects.html">Projects</a></p>
+                <p><a href="blog.html">Blogs</a></p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-envelope"></i> bharathkumargorle1744@gmail.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> Bhimavaram, India</p>
+                <p><i class="fas fa-phone"></i> +91 9876543210</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 Bharath Kumar Gorle. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyATnAziN-i_XuipwmNNL54Uo32Lp6gixIo",
+            authDomain: "personal-project-62960.firebaseapp.com",
+            projectId: "personal-project-62960",
+            storageBucket: "personal-project-62960.appspot.com",
+            messagingSenderId: "764447192852",
+            appId: "1:764447192852:web:185a024bcd9a1a504bf401",
+            measurementId: "G-NXDQT7BF8E"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        
+        // Show redirect notification
+        function showRedirectNotification() {
+            const notification = document.getElementById('redirectNotification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 500);
+            }, 3000);
+        }
+        
+        // Check authentication status
+        auth.onAuthStateChanged(function(user) {
+            if (!user) {
+                showRedirectNotification();
+            }
+        });
+        
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobileMenuBtn');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            
+            // Toggle mobile menu
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.add('active');
+                });
+            }
+            
+            // Close mobile menu
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            }
+            
+            // Close mobile menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            });
+            
+            // Close menu when clicking outside
+            mobileMenuOverlay.addEventListener('click', function(e) {
+                if (e.target === mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.remove('active');
+                }
+            });
+            
+            // Animation for blog cards on scroll
+            const blogCards = document.querySelectorAll('.blog-card');
+            
+            // Function to check if element is in viewport
+            function isInViewport(element) {
+                const rect = element.getBoundingClientRect();
+                return (
+                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8
+                );
+            }
+            
+            // Animate elements when they come into view
+            function animateOnScroll() {
+                blogCards.forEach((card, index) => {
+                    if (isInViewport(card)) {
+                        setTimeout(() => {
+                            card.classList.add('in-view');
+                        }, index * 150);
+                    }
+                });
+            }
+            
+            // Initial check and scroll event listener
+            animateOnScroll();
+            window.addEventListener('scroll', animateOnScroll);
+        });
+        // Function to update login/logout button
+    function updateAuthButton(user) {
+        const loginButtons = document.querySelectorAll('.login-btn');
+        
+        loginButtons.forEach(button => {
+            if (user) {
+                // User is logged in - show Logout
+                button.textContent = 'Logout';
+                button.onclick = () => {
+                    auth.signOut().then(() => {
+                        window.location.href = 'index.html';
+                    }).catch(error => {
+                        console.error('Sign out error', error);
+                    });
+                };
+            } else {
+                // User is logged out - show Login
+                button.textContent = 'Login';
+                button.onclick = () => {
+                    window.location.href = 'auth.html';
+                };
+            }
+        });
+    }
+    
+    // Check auth state on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        auth.onAuthStateChanged(user => {
+            updateAuthButton(user);
+            
+            // For blog/projects pages - show notification if not logged in
+            if (window.location.pathname.includes('blog.html') || 
+                window.location.pathname.includes('projects.html')) {
+                if (!user) {
+                    const notification = document.getElementById('redirectNotification');
+                    if (notification) {
+                        notification.classList.add('show');
+                        setTimeout(() => {
+                            window.location.href = 'auth.html';
+                        }, 3000);
+                    }
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>

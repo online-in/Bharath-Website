@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oxelion - Secure Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2a9d8f;
+            --secondary: #264653;
+            --accent: #e9c46a;
+            --light: #f4f9f9;
+            --dark: #2b2d42;
+            --text: #333333;
+            --background: #ffffff;
+            --card-bg: #f8f9fa;
+            --success: #4CAF50;
+            --error: #e63946;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f4f9f9 0%, #e3f2fd 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Changed to column to stack content vertically */
+            justify-content: space-between; /* Space out content and footer */
+            align-items: center;
+            padding-top: 100px; /* Space for fixed header */
+            padding-bottom: 40px; /* Reduced bottom padding */
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(0); }
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 40px; /* Adjusted height for better alignment */
+        }
+
+        .logo-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            height: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-flex:hover .logo-img {
+            transform: rotate(15deg);
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .logo-flex:hover .logo {
+            text-shadow: 0 0 10px rgba(255,255,255,0.7);
+        }
+
+        .auth-container {
+            display: flex;
+            width: 90%; /* Adjusted width for better responsiveness */
+            max-width: 1000px;
+            min-height: 550px;
+            background: var(--background);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 0.8s ease-out;
+            margin: auto; /* Center the container */
+            flex-grow: 1; /* Allow container to grow and push footer down */
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="rgba(42, 157, 143, 0.03)" stroke-width="2"/></svg>');
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .auth-form-section {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            /* Added min-height to ensure consistent height between forms */
+            min-height: 500px; /* Adjust as needed */
+        }
+
+        .auth-illustration {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            animation: gradientShift 15s ease infinite;
+            background-size: 300% 300%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .auth-illustration::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: pulse 8s infinite ease-in-out;
+        }
+
+        .auth-illustration::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            animation: pulse 10s infinite ease-in-out;
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        .auth-title {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            animation: textFadeIn 1s ease-out;
+        }
+
+        @keyframes textFadeIn {
+            0% { opacity: 0; transform: translateX(-20px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .highlight-accent {
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+
+        .highlight-accent::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(233, 196, 106, 0.3);
+            z-index: -1;
+            transform-origin: left;
+            animation: highlight 1.5s ease-in-out forwards;
+        }
+
+        @keyframes highlight {
+            0% { transform: scaleX(0); }
+            100% { transform: scaleX(1); }
+        }
+
+        .auth-social-row {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+
+        .auth-social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(42, 157, 143, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: popIn 0.5s ease-out;
+            animation-delay: calc(0.1s * var(--i));
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .auth-social-btn:hover {
+            background: rgba(42, 157, 143, 0.2);
+            transform: translateY(-5px) rotate(5deg);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .auth-or {
+            text-align: center;
+            color: #888;
+            font-size: 1rem;
+            margin: 1.5rem 0;
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .auth-or::before,
+        .auth-or::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .auth-or::before {
+            left: 0;
+        }
+
+        .auth-or::after {
+            right: 0;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+            animation-delay: calc(0.1s * var(--i));
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+
+        .required {
+            color: var(--error);
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .auth-form input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .auth-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .remember input {
+            width: auto;
+        }
+
+        .auth-forgot {
+            color: var(--primary);
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .auth-forgot::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s ease;
+        }
+
+        .auth-forgot:hover {
+            color: var(--secondary);
+        }
+
+        .auth-forgot:hover::after {
+            width: 100%;
+        }
+
+        .auth-form-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(42, 157, 143, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-form-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255,255,255,0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s ease;
+        }
+
+        .auth-form-btn:hover {
+            background: #248277;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(42, 157, 143, 0.4);
+        }
+
+        .auth-form-btn:hover::after {
+            left: 120%;
+        }
+
+        .auth-toggle-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            color: #666;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .auth-toggle-link a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 0.3rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .auth-toggle-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s ease;
+        }
+
+        .auth-toggle-link a:hover {
+            color: var(--secondary);
+        }
+
+        .auth-toggle-link a:hover::after {
+            width: 100%;
+        }
+
+        .status-message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .status-message.show {
+            opacity: 1;
+            max-height: 100px;
+            padding: 15px 20px; /* Ensure padding is applied when shown */
+        }
+
+        .status-message.success {
+            background: rgba(76, 175, 80, 0.15);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .status-message.error {
+            background: rgba(230, 57, 70, 0.15);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .status-message.info {
+            background: rgba(66, 133, 244, 0.15); /* Google Blue tint */
+            border: 1px solid #4285F4; /* Google Blue */
+            color: #4285F4; /* Google Blue */
+        }
+
+        /* Form transition effects */
+        /* Make form sections take up full width of parent and use display: block for visibility */
+        .form-transition {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            position: absolute; /* Keep absolute for transitions within the same space */
+            width: 100%;
+            top: 0;
+            left: 0;
+            padding: inherit; /* Inherit padding from parent .auth-form-section */
+            box-sizing: border-box; /* Include padding in width */
+            visibility: hidden; /* Start hidden */
+            opacity: 0; /* Start invisible */
+            pointer-events: none; /* Disable interaction when hidden */
+        }
+
+        .form-transition.form-in {
+            visibility: visible; /* Make visible */
+            opacity: 1; /* Make opaque */
+            transform: translateX(0);
+            position: relative; /* Take up space when active */
+            pointer-events: auto; /* Enable interaction */
+        }
+
+        .form-transition.form-out {
+            opacity: 0;
+            transform: translateX(-20px);
+            pointer-events: none;
+        }
+        /* Style for register form when inactive */
+        #registerForm {
+             transform: translateX(20px); /* Initial position for register form */
+        }
+
+        .auth-illustration-content {
+            color: white;
+            text-align: center;
+            z-index: 2;
+            max-width: 400px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .auth-illustration h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            animation: textFadeIn 1.2s ease-out;
+        }
+
+        .auth-illustration p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeIn 1.4s ease-out;
+        }
+
+        .auth-features {
+            text-align: left;
+            margin-top: 2rem;
+        }
+
+        .auth-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideRight 0.6s forwards;
+        }
+
+        @keyframes slideRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .auth-feature:nth-child(1) { animation-delay: 0.2s; }
+        .auth-feature:nth-child(2) { animation-delay: 0.4s; }
+        .auth-feature:nth-child(3) { animation-delay: 0.6s; }
+        .auth-feature:nth-child(4) { animation-delay: 0.8s; }
+
+        .auth-feature i {
+            color: var(--accent);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .auth-feature:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .secure-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            animation: bounce 2s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        /* Footer styles - changed to static positioning */
+        footer {
+            width: 100%;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            z-index: 1000;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            margin-top: 40px; /* Added margin for spacing */
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-content p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .social-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-3px) rotate(5deg);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 900px) {
+            .auth-container {
+                flex-direction: column;
+                max-width: 600px;
+                min-height: auto;
+            }
+            
+            .auth-illustration {
+                padding: 40px 20px;
+                order: -1; /* Move illustration to top on small screens */
+            }
+            
+            .auth-form-section {
+                padding: 40px 30px;
+                min-height: auto; /* Allow height to be dynamic on small screens */
+            }
+            
+            .form-transition {
+                position: relative; /* Change to relative for stacking */
+                transform: translateX(0) !important; /* Override transition transforms */
+                opacity: 1 !important; /* Always visible in column layout */
+                visibility: visible !important;
+                pointer-events: auto !important;
+                display: none; /* Hide via display when inactive */
+            }
+
+            .form-transition.form-in {
+                display: block; /* Show via display when active */
+            }
+
+            #registerForm {
+                transform: translateX(0); /* Remove initial transform */
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 90px 15px 40px; /* Adjusted bottom padding */
+            }
+            
+            .auth-form-section {
+                padding: 30px 20px;
+            }
+            
+            .auth-title {
+                font-size: 2rem;
+            }
+            
+            .auth-illustration-content {
+                padding: 20px;
+            }
+            
+            header {
+                padding: 1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav">
+            <div class="logo-flex">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTEyIDBDNS4zNzMgMCAwIDUuMzczIDAgMTJzNS4zNzMgMTIgMTIgMTIgMTItNS4zNzMgMTItMTJTMjQuNjI3IDAgMTIgMHptMCAyMmMtNS41MjIgMC0xMC00LjQ3OC0xMC0xMFM2LjQ3OCAyIDEyIDJzMTAgNC40NzggMTAgMTAtNC40NzggMTAtMTAgMTB6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTEyIDRjLTIuMjA2IDAtNCAxLjc5NC00IDQgMCAuNTUzLjQ0NyAxIDEgMXMxLS40NDcgMS0xYzAtMS4xMDMuODk3LTIgMi0ycyAyIC44OTcgMiAyYzAgMS4xMDMtLjg5NyAyLTIgMmgtM3YyaDNjMi4yMDYgMCA0LTEuNzk0IDQtNHMtMS43OTQtNC00LTR6Ii8+PC9zdmc+" alt="Logo" class="logo-img" />                <div class="logo">Oxelion</div>
+            </div>
+            <button class="auth-form-btn" style="width: auto; padding: 8px 20px;" id="homeButton">
+                <i class="fas fa-home"></i> Home
+            </button>
+        </nav>
+    </header>
+
+    <div class="auth-container">
+        <div class="auth-form-section">
+            <div id="loginForm" class="form-transition form-in">
+                <h2 class="auth-title">Welcome to <span class="highlight-accent">Oxelion</span></h2>
+                <div id="loginStatus" class="status-message"></div>
+                
+                <div class="auth-social-row">
+                    <button class="auth-social-btn" id="googleLogin" style="--i:1">
+                        <i class="fab fa-google"></i>
+                    </button>
+                    <button class="auth-social-btn" id="githubLogin" style="--i:2">
+                        <i class="fab fa-github"></i>
+                    </button>
+                    <button class="auth-social-btn" id="linkedinLogin" style="--i:3">
+                        <i class="fab fa-linkedin-in"></i>
+                    </button>
+                </div>
+                
+                <div class="auth-or">or sign in with your credentials</div>
+                
+                <form class="auth-form" id="loginFormElement">
+                    <div class="form-group" style="--i:1">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group" style="--i:2">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="auth-options">
+                        <div class="remember">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        <a href="#" class="auth-forgot" id="forgotPassword">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="auth-form-btn" id="loginButton">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                
+                <div class="auth-toggle-link">
+                    Don't have an account? 
+                    <a href="#" id="showRegister">Sign up</a>
+                </div>
+            </div>
+            
+            <div id="registerForm" class="form-transition">
+                <h2 class="auth-title">Create an <span class="highlight-accent">Account</span></h2>
+                <div id="registerStatus" class="status-message"></div>
+                
+                <div class="auth-social-row">
+                    <button class="auth-social-btn" id="googleRegister" style="--i:1">
+                        <i class="fab fa-google"></i>
+                    </button>
+                    <button class="auth-social-btn" id="githubRegister" style="--i:2">
+                        <i class="fab fa-github"></i>
+                    </button>
+                    <button class="auth-social-btn" id="linkedinRegister" style="--i:3">
+                        <i class="fab fa-linkedin-in"></i>
+                    </button>
+                </div>
+                
+                <div class="auth-or">or sign up with email</div>
+                
+                <form class="auth-form" id="registerFormElement">
+                    <div class="form-group" style="--i:1">
+                        <label for="register-name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="register-name" placeholder="Your full name" required>
+                    </div>
+                    
+                    <div class="form-group" style="--i:2">
+                        <label for="register-email">Email <span class="required">*</span></label>
+                        <input type="email" id="register-email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group" style="--i:3">
+                        <label for="register-password">Password <span class="required">*</span></label>
+                        <input type="password" id="register-password" placeholder="Create a password" required>
+                    </div>
+                    
+                    <div class="form-group" style="--i:4">
+                        <label for="register-confirm">Confirm Password <span class="required">*</span></label>
+                        <input type="password" id="register-confirm" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <button type="submit" class="auth-form-btn" id="registerButton">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                </form>
+                
+                <div class="auth-toggle-link">
+                    Already have an account? 
+                    <a href="#" id="showLogin">Sign in</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="auth-illustration">
+            <div class="auth-illustration-content">
+                <i class="fas fa-lock secure-icon"></i>
+                <h2>Secure Authentication</h2>
+                <p>Your security is our top priority. All data is encrypted and securely stored.</p>
+                
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>256-bit SSL Encryption</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Two-Factor Authentication</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-database"></i>
+                        <span>Secure Cloud Storage</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Regular Security Updates</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2023 Oxelion. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" id="facebookLink"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" id="twitterLink"><i class="fab fa-twitter"></i></a>
+                <a href="#" id="instagramLink"><i class="fab fa-instagram"></i></a>
+                <a href="#" id="linkedinLink"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyATnAziN-i_XuipwmNNL54Uo32Lp6gixIo",
+            authDomain: "personal-project-62960.firebaseapp.com",
+            projectId: "personal-project-62960",
+            storageBucket: "personal-project-62960.appspot.com",
+            messagingSenderId: "764447192852",
+            appId: "1:764447192852:web:185a024bcd9a1a504bf401",
+            measurementId: "G-NXDQT7BF8E"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        
+        // Home button functionality
+        document.getElementById('homeButton').addEventListener('click', function() {
+            showStatus(document.getElementById('loginStatus'), 'info', 'Redirecting to home page...');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        });
+
+        // Form toggling with animations and form reset
+        document.getElementById('showRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const authFormSection = document.querySelector('.auth-form-section');
+            
+            // Reset login form and hide status
+            document.getElementById('loginFormElement').reset();
+            hideStatus(document.getElementById('loginStatus'));
+            
+            loginForm.classList.remove('form-in');
+            loginForm.classList.add('form-out');
+            
+            // Set minimum height before transition to prevent jumpiness
+            authFormSection.style.minHeight = loginForm.offsetHeight + 'px';
+
+            setTimeout(() => {
+                loginForm.style.display = 'none'; // Hide after transition
+                loginForm.classList.remove('form-out'); // Remove class after hiding
+
+                registerForm.style.display = 'block'; // Show register form
+                
+                // Set min-height for the register form after it's visible, for smooth transition back
+                authFormSection.style.minHeight = registerForm.offsetHeight + 'px';
+
+                setTimeout(() => {
+                    registerForm.classList.add('form-in');
+                }, 10);
+            }, 400); // Duration of the form-out transition
+        });
+        
+        document.getElementById('showLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const authFormSection = document.querySelector('.auth-form-section');
+
+            // Reset register form and hide status
+            document.getElementById('registerFormElement').reset();
+            hideStatus(document.getElementById('registerStatus'));
+            
+            registerForm.classList.remove('form-in');
+            registerForm.classList.add('form-out');
+
+            // Set minimum height before transition to prevent jumpiness
+            authFormSection.style.minHeight = registerForm.offsetHeight + 'px';
+            
+            setTimeout(() => {
+                registerForm.style.display = 'none'; // Hide after transition
+                registerForm.classList.remove('form-out'); // Remove class after hiding
+                
+                loginForm.style.display = 'block'; // Show login form
+
+                // Set min-height for the login form after it's visible
+                authFormSection.style.minHeight = loginForm.offsetHeight + 'px';
+
+                setTimeout(() => {
+                    loginForm.classList.add('form-in');
+                }, 10);
+            }, 400); // Duration of the form-out transition
+        });
+        
+        // Initialize forms: Login form is visible, Register form is hidden
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const authFormSection = document.querySelector('.auth-form-section');
+
+            loginForm.style.display = 'block'; // Ensure login form is visible on load
+            loginForm.classList.add('form-in');
+
+            registerForm.style.display = 'none'; // Ensure register form is hidden on load
+            registerForm.classList.remove('form-in');
+            registerForm.classList.remove('form-out'); // Remove any lingering transition classes
+
+            // Set initial min-height based on the active form
+            authFormSection.style.minHeight = loginForm.offsetHeight + 'px';
+        });
+        
+        // Login form validation with Firebase
+        document.getElementById('loginFormElement').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const status = document.getElementById('loginStatus');
+            
+            if (!email || !password) {
+                showStatus(status, 'error', 'Please enter both email and password');
+                return;
+            }
+            
+            // Firebase sign in
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    showStatus(status, 'success', 'Login successful! Redirecting to home page...');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    showStatus(status, 'error', errorMessage);
+                });
+        });
+        
+        // Register form validation with Firebase
+        document.getElementById('registerFormElement').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            const status = document.getElementById('registerStatus');
+            
+            if (!name || !email || !password || !confirm) {
+                showStatus(status, 'error', 'Please fill all fields');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showStatus(status, 'error', 'Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showStatus(status, 'error', 'Password must be at least 8 characters');
+                return;
+            }
+            
+            // Firebase create user
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    
+                    // Update user profile with name
+                    return user.updateProfile({
+                        displayName: name
+                    });
+                })
+                .then(() => {
+                    showStatus(status, 'success', 'Account created successfully! Redirecting to login...');
+                    
+                    setTimeout(() => {
+                        document.getElementById('showLogin').click(); // Switch to login form
+                    }, 2000);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    showStatus(status, 'error', errorMessage);
+                });
+        });
+        
+        // Forgot password functionality with Firebase
+        document.getElementById('forgotPassword').addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const status = document.getElementById('loginStatus');
+            
+            if (!email) {
+                showStatus(status, 'error', 'Please enter your email first');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showStatus(status, 'error', 'Please enter a valid email address');
+                return;
+            }
+            
+            // Send password reset email
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showStatus(status, 'info', 'Password reset instructions sent to your email');
+                })
+                .catch((error) => {
+                    showStatus(status, 'error', error.message);
+                });
+        });
+        
+        // Social login functionality
+        function setupSocialLogin(buttonId, provider) {
+            document.getElementById(buttonId).addEventListener('click', function() {
+                let statusElement;
+                if (buttonId.includes('Login')) {
+                    statusElement = document.getElementById('loginStatus');
+                } else {
+                    statusElement = document.getElementById('registerStatus');
+                }
+                
+                showStatus(statusElement, 'info', `Signing in with ${provider.providerId}...`);
+                
+                auth.signInWithPopup(provider)
+                    .then((result) => {
+                        // This gives you a Google Access Token. You can use it to access the Google API.
+                        // The signed-in user info.
+                        showStatus(statusElement, 'success', 'Login successful! Redirecting...');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1000);
+                    })
+                    .catch((error) => {
+                        // Handle Errors here.
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        showStatus(statusElement, 'error', errorMessage);
+                    });
+            });
+        }
+        
+        // Setup social providers
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        const githubProvider = new firebase.auth.GithubAuthProvider();
+        const linkedinProvider = new firebase.auth.OAuthProvider('linkedin.com');
+        
+        // Setup all social login buttons
+        setupSocialLogin('googleLogin', googleProvider);
+        setupSocialLogin('githubLogin', githubProvider);
+        setupSocialLogin('linkedinLogin', linkedinProvider);
+        setupSocialLogin('googleRegister', googleProvider);
+        setupSocialLogin('githubRegister', githubProvider);
+        setupSocialLogin('linkedinRegister', linkedinProvider);
+        
+        // Footer social links
+        document.getElementById('facebookLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open('https://facebook.com', '_blank');
+        });
+        
+        document.getElementById('twitterLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open('https://twitter.com', '_blank');
+        });
+        
+        document.getElementById('instagramLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open('https://instagram.com', '_blank');
+        });
+        
+        document.getElementById('linkedinLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open('https://linkedin.com', '_blank');
+        });
+        
+        // Status message functions
+        function showStatus(element, type, message) {
+            element.textContent = message;
+            element.className = `status-message ${type} show`;
+        }
+        
+        function hideStatus(element) {
+            element.classList.remove('show');
+            setTimeout(() => {
+                element.className = 'status-message'; /* Reset to base class to clear type */
+            }, 500);
+        }
+        
+        // Email validation helper
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // Initialize social buttons with delays
+        document.querySelectorAll('.auth-social-btn').forEach((btn, i) => {
+            btn.style.setProperty('--i', i+1);
+        });
+    </script>
+</body>
+</html>

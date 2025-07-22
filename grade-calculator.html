@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Calculator - GPA Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        :root {
+            --primary: #2a9d8f;
+            --secondary: #264653;
+            --accent: #e9c46a;
+            --light: #f4f9f9;
+            --dark: #2b2d42;
+            --text: #333333;
+            --background: #ffffff;
+            --card-bg: #f8f9fa;
+            --success: #4CAF50;
+            --error: #e63946;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --nav-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f4f9f9 0%, #e3f2fd 100%);
+            min-height: 100vh;
+            padding-bottom: 40px;
+            color: var(--text);
+        }
+
+        /* ========== NAVIGATION BAR ========== */
+        header {
+            background: var(--background);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: var(--nav-height);
+        }
+
+        .logo-flex {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: 36px;
+            background-color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active::after,
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Buttons */
+        .primary-button {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(42, 157, 143, 0.3);
+            margin-left: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .primary-button:hover {
+            background-color: #217f74;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(42, 157, 143, 0.4);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu-button:hover {
+            transform: scale(1.1);
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: flex-end;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 2000;
+        }
+
+        .mobile-menu-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            background: var(--background);
+            width: 70%;
+            max-width: 300px;
+            padding: 2rem;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .mobile-menu-overlay.active .mobile-menu {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--dark);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: color 0.2s;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--primary);
+            padding-left: 10px;
+        }
+
+        /* ========== REDIRECT NOTIFICATION ========== */
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #FFB800;
+            color: #181818;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(-120%);
+            transition: transform 0.4s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        
+        .notification-toast.show {
+            transform: translateX(0);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 184, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0); }
+        }
+
+        /* ========== CALCULATOR STYLES ========== */
+        .calculator-container {
+            max-width: 800px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: slideInUp 0.8s ease;
+        }
+
+        .calculator-header {
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .calculator-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .calculator-header p {
+            opacity: 0.9;
+        }
+
+        .calculator-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Code Editor */
+        .code-editor {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 1s ease;
+        }
+
+        .editor-header {
+            background: #1e1e1e;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-circles {
+            display: flex;
+            gap: 8px;
+        }
+
+        .circle {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .circle-red {
+            background: #ff5f56;
+        }
+
+        .circle-yellow {
+            background: #ffbd2e;
+        }
+
+        .circle-green {
+            background: #27c93f;
+        }
+
+        .editor-title {
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .code-display {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Form Elements */
+        .calculator-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .calculate-button {
+            width: 180px;
+            height: 50px;
+            border-radius: 50px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            gap: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .calculate-button:hover {
+            background: #248277;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+        }
+        
+        input {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+        }
+
+        .grades-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .grade-input {
+            width: 80px;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .grade-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+        }
+
+        button.primary-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100px;
+            height: 50px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 10px;
+        }
+
+        button.primary-button:hover {
+            background: #248277;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+        }
+
+        /* Results Section */
+        .result-container {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 10px;
+            display: none;
+            border-left: 5px solid var(--primary);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .result-container h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-container p {
+            margin: 0.8rem 0;
+            font-size: 1.1rem;
+        }
+
+        .result-container span {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .gpa-value {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        /* Grade Key */
+        .grade-key {
+            margin-top: 1.5rem;
+            background: #f1f3f9;
+            border-radius: 10px;
+            padding: 1rem;
+            animation: slideInUp 0.5s ease;
+        }
+
+        .grade-key h4 {
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .grade-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .grade-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .grade-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .grade-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .grade-O { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
+        .grade-Aplus { background: linear-gradient(45deg, #a1c4fd, #c2e9fb); }
+        .grade-A { background: linear-gradient(45deg, #d4fc79, #96e6a1); }
+        .grade-Bplus { background: linear-gradient(45deg, #84fab0, #8fd3f4); }
+        .grade-B { background: linear-gradient(45deg, #a6c0fe, #f68084); }
+        .grade-C { background: linear-gradient(45deg, #fccb90, #d57eeb); }
+        .grade-D { background: linear-gradient(45deg, #f6d365, #fda085); }
+        .grade-F { background: linear-gradient(45deg, #ff0844, #ffb199); }
+
+        /* Success Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Animations */
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .nav-links {
+                display: none;
+            }
+            .login-btn {
+                display: none;
+            }
+            .mobile-menu-button {
+                display: block;
+            }
+            
+            .calculator-container {
+                margin: 100px 20px 20px;
+            }
+            
+            .calculator-content {
+                padding: 1.5rem;
+            }
+            
+            .grade-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .project-info {
+                padding: 1.5rem;
+            }
+            
+            .calculator-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .grade-input {
+                width: 65px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with fixed navigation -->
+    <header>
+        <nav class="nav">
+            <div class="logo-flex">
+                <div class="logo-img">BK</div>
+                <a href="#" class="logo">
+                    <span>Oxelion</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="projects.html">Projects</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blogs</a>
+                <a href="resource.html">Resource</a>
+            </div>
+            <button class="primary-button login-btn" onclick="window.location.href='auth.html'">Login</button>
+            <button class="mobile-menu-button" id="mobileMenuBtn" aria-label="Open menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay">
+            <div class="mobile-menu">
+                <button class="mobile-menu-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="index.html">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="projects.html">Projects</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blogs</a>
+                <a href="resource.html">Resource</a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Redirect Notification -->
+    <div class="notification-toast" id="redirectNotification">
+        <i class="fas fa-exclamation-circle"></i>
+        You're being redirected to login page
+    </div>
+
+    <!-- Calculator Container -->
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h2>Grade Calculator</h2>
+            <p>Calculate your GPA based on your grades</p>
+        </div>
+        
+        <div class="calculator-content">
+            <div class="code-editor">
+                <div class="editor-header">
+                    <div class="editor-left">
+                        <div class="editor-circles">
+                            <span class="circle circle-red"></span>
+                            <span class="circle circle-yellow"></span>
+                            <span class="circle circle-green"></span>
+                        </div>
+                        <span class="editor-title">grade_calculator.py</span>
+                    </div>
+                    <button id="copyButton" class="copy-btn">
+                        <i class="far fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="code-display" id="codeDisplay">
+# Python GPA Calculator Implementation
+def calculate_gpa():
+    print("Welcome to GPA Calculator")
+    name = input("Enter Your Name: ")
+    num_grades = int(input("Enter number of grades: "))
+    print(f"Enter {num_grades} grades separated by space (O, A+, A, B+, B, C, D, F):")
+    
+    grades = input().split()
+    if len(grades) != num_grades:
+        print(f"Error: You entered {len(grades)} grades, but expected {num_grades}")
+        return
+        
+    total = 0
+    grade_points = {
+        'O': 10, 'A+': 9, 'A': 8, 
+        'B+': 7, 'B': 6, 'C': 5, 
+        'D': 4, 'F': 0
+    }
+    
+    for grade in grades:
+        grade = grade.upper()
+        if grade not in grade_points:
+            print(f"Invalid grade: {grade}")
+            return
+        total += grade_points[grade]
+        
+    gpa = total / num_grades
+    print("\n--- Results ---")
+    print(f"Name: {name}")
+    print(f"Total Points: {total:.2f}")
+    print(f"GPA: {gpa:.2f}")
+
+if __name__ == "__main__":
+    calculate_gpa()
+                </div>
+            </div>
+
+            <form id="gradeCalculatorForm" class="calculator-form">
+                <div class="form-group">
+                    <label for="studentName"><i class="fas fa-user"></i> Your Name:</label>
+                    <input type="text" id="studentName" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="numGrades"><i class="fas fa-list-ol"></i> Number of Grades:</label>
+                    <input type="number" id="numGrades" min="1" max="20" placeholder="Enter number of grades" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-graduation-cap"></i> Enter Grades (O, A+, A, B+, B, C, D, F):</label>
+                    <div id="gradesContainer" class="grades-container">
+                        <!-- Grade inputs will be added here dynamically -->
+                    </div>
+                </div>
+
+                <button type="submit" class="calculate-button">
+                    <i class="fas fa-calculator"></i> Calculate GPA
+                </button>
+            </form>
+
+            <div id="resultContainer" class="result-container">
+                <h3><i class="fas fa-chart-line"></i> Results:</h3>
+                <p>Name: <span id="resultName"></span></p>
+                <p>Total Points: <span id="resultTotal"></span></p>
+                <p>GPA: <span class="gpa-value" id="resultGPA"></span></p>
+            </div>
+            
+            <div class="grade-key">
+                <h4><i class="fas fa-key"></i> Grade Point Key:</h4>
+                <div class="grade-grid">
+                    <div class="grade-item">
+                        <div class="grade-color grade-O"></div>
+                        <div>O = 10</div>
+                    </div>
+                    <div class="grade-item">
+                        <div class="grade-color grade-Aplus"></div>
+                        <div>A+ = 9</div>
+                    </div>
+                    <div class="grade-item">
+                        <div class="grade-color grade-A"></div>
+                        <div>A = 8</div>
+                    </div>
+                    <div class="grade-item">
+                        <div class="grade-color grade-Bplus"></div>
+                        <div>B+ = 7</div>
+                    </div>
+                    <div class="grade-item">
+                        <div class="grade-color grade-B"></div>
+                        <div>B = 6</div>
+                    </div>
+                    <div class="grade-item">
+                        <div class="grade-color grade-C"></div>
+                        <div>C = 5</div>
+                    </div>
+                    <div class="grade-item">
+                        <div class="grade-color grade-D"></div>
+                        <div>D = 4</div>
+                    </div>
+                    <div class="grade-item">
+                        <div class="grade-color grade-F"></div>
+                        <div>F = 0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Code copied to clipboard!</span>
+    </div>
+
+    <!-- Firebase and other scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyATnAziN-i_XuipwmNNL54Uo32Lp6gixIo",
+            authDomain: "personal-project-62960.firebaseapp.com",
+            projectId: "personal-project-62960",
+            storageBucket: "personal-project-62960.appspot.com",
+            messagingSenderId: "764447192852",
+            appId: "1:764447192852:web:185a024bcd9a1a504bf401",
+            measurementId: "G-NXDQT7BF8E"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        
+        // Redirect notification function
+        function showRedirectNotification() {
+            const notification = document.getElementById('redirectNotification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 500);
+            }, 3000);
+        }
+        
+        // Check authentication status
+        auth.onAuthStateChanged(function(user) {
+            if (!user) {
+                showRedirectNotification();
+            }
+        });
+        
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobileMenuBtn');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            
+            // Toggle mobile menu
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.add('active');
+                });
+            }
+            
+            // Close mobile menu
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            }
+            
+            // Close mobile menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            });
+            
+            // Close menu when clicking outside
+            mobileMenuOverlay.addEventListener('click', function(e) {
+                if (e.target === mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.remove('active');
+                }
+            });
+            
+            // Copy code functionality
+            const copyButton = document.getElementById('copyButton');
+            if (copyButton) {
+                copyButton.addEventListener('click', function() {
+                    const codeDisplay = document.getElementById('codeDisplay');
+                    const textArea = document.createElement('textarea');
+                    textArea.value = codeDisplay.textContent;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    const notification = document.getElementById('notification');
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                });
+            }
+            
+            // Grade input generation
+            const numGradesInput = document.getElementById('numGrades');
+            const gradesContainer = document.getElementById('gradesContainer');
+            
+            numGradesInput.addEventListener('input', function() {
+                const numGrades = parseInt(numGradesInput.value) || 0;
+                gradesContainer.innerHTML = '';
+                
+                for (let i = 0; i < numGrades; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'grade-input';
+                    input.placeholder = `Grade ${i + 1}`;
+                    input.required = true;
+                    gradesContainer.appendChild(input);
+                }
+            });
+            
+            // GPA Calculation
+            const form = document.getElementById('gradeCalculatorForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('studentName').value;
+                const gradeInputs = document.querySelectorAll('.grade-input');
+                const grades = Array.from(gradeInputs).map(input => input.value.toUpperCase());
+                
+                const gradePoints = {
+                    'O': 10, 'A+': 9, 'A': 8, 
+                    'B+': 7, 'B': 6, 'C': 5, 
+                    'D': 4, 'F': 0
+                };
+                
+                let totalPoints = 0;
+                let valid = true;
+                
+                for (const grade of grades) {
+                    if (!gradePoints.hasOwnProperty(grade)) {
+                        alert(`Invalid grade: ${grade}. Please use only O, A+, A, B+, B, C, D, F.`);
+                        valid = false;
+                        break;
+                    }
+                    totalPoints += gradePoints[grade];
+                }
+                
+                if (valid) {
+                    const gpa = totalPoints / grades.length;
+                    
+                    document.getElementById('resultName').textContent = name;
+                    document.getElementById('resultTotal').textContent = totalPoints.toFixed(2);
+                    document.getElementById('resultGPA').textContent = gpa.toFixed(2);
+                    
+                    const resultContainer = document.getElementById('resultContainer');
+                    resultContainer.classList.add('show');
+                    
+                    // Scroll to results
+                    resultContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

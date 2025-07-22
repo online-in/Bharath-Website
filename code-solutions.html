@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Languages Showcase - Oxelion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2a9d8f;
+            --secondary: #264653;
+            --accent: #e9c46a;
+            --light: #f4f9f9;
+            --dark: #2b2d42;
+            --text: #333333;
+            --background: #ffffff;
+            --card-bg: #f8f9fa;
+            --success: #4CAF50;
+            --error: #e63946;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --python: #3776ab;
+            --java: #5382a1;
+            --c: #004482;
+            --javascript: #f7df1e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f4f9f9 0%, #e3f2fd 100%);
+            min-height: 100vh;
+            padding-bottom: 40px;
+            color: var(--text);
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .primary-button {
+            background: var(--accent);
+            color: var(--secondary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .primary-button:hover {
+            background: #e0b252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(233, 196, 106, 0.4);
+        }
+
+        .languages-container {
+            max-width: 1200px;
+            margin: 120px auto 40px;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .section-header h1 {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 2rem;
+        }
+
+        .language-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            animation: fadeIn 1s ease;
+        }
+
+        .language-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--secondary);
+            color: white;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: transform 0.5s ease;
+        }
+
+        .language-card:hover .card-icon {
+            transform: rotate(15deg);
+        }
+
+        .python .card-icon {
+            color: var(--python);
+        }
+
+        .java .card-icon {
+            color: var(--java);
+        }
+
+        .c .card-icon {
+            color: var(--c);
+        }
+
+        .javascript .card-icon {
+            color: var(--javascript);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .card-content {
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .card-features {
+            margin-top: 1rem;
+        }
+
+        .card-features h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            list-style-type: none;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .features-list li:hover {
+            transform: translateX(10px);
+        }
+
+        .features-list li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .card-footer {
+            padding: 1.5rem 2rem;
+            background: var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .language-card:hover .card-footer {
+            background: #e8f0fe;
+        }
+
+        .usage-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .language-card:hover .stat-item {
+            transform: scale(1.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .action-button {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-button:hover {
+            background: #248277;
+            transform: translateY(-2px);
+            gap: 12px;
+        }
+
+        .svg-container {
+            height: 200px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .language-card:hover .svg-container {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .python .svg-container {
+            background: rgba(55, 118, 171, 0.1);
+        }
+
+        .java .svg-container {
+            background: rgba(83, 130, 161, 0.1);
+        }
+
+        .c .svg-container {
+            background: rgba(0, 68, 130, 0.1);
+        }
+
+        .javascript .svg-container {
+            background: rgba(247, 223, 30, 0.1);
+        }
+
+        /* SVG Animation */
+        .gear {
+            animation: rotate 8s linear infinite;
+            transform-origin: center;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .python-snake {
+            animation: slither 4s ease-in-out infinite;
+        }
+
+        @keyframes slither {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(10px);
+            }
+        }
+
+        .java-cup-steam {
+            animation: steam 3s ease-in-out infinite;
+        }
+
+        @keyframes steam {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .c-gear {
+            animation: rotate 6s linear infinite reverse;
+            transform-origin: center;
+        }
+
+        .javascript-bracket {
+            animation: bounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #FFB800;
+            color: #181818;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(-120%);
+            transition: transform 0.4s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: flex-end;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 2000;
+        }
+
+        .mobile-menu-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            background: var(--secondary);
+            width: 70%;
+            max-width: 300px;
+            padding: 2rem;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .mobile-menu-overlay.active .mobile-menu {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: white;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: color 0.2s;
+        }
+
+        .mobile-menu a:hover,
+        .mobile-menu a.active {
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .languages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-footer {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .usage-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-button {
+                display: block;
+            }
+            
+            .primary-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav">
+            <div class="logo-flex">
+                <div class="logo">Oxelion</div>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="about.html">About Me</a>
+                <a href="projects.html">Projects</a>
+                <a href="contact.html">Contact</a>
+                <a href="blog.html">Blogs</a>
+                <a href="resource.html">Resource</a>
+            </div>
+            <button class="primary-button login-btn">Hi Coder</button>
+            <button class="mobile-menu-button" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay">
+        <div class="mobile-menu">
+            <button class="mobile-menu-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="index.html" class="active">Home</a>
+            <a href="about.html">About Me</a>
+            <a href="projects.html">Projects</a>
+            <a href="contact.html">Contact</a>
+            <a href="blog.html">Blogs</a>
+            <a href="resource.html">Resource</a>
+        </div>
+    </div>
+
+    <!-- Redirect Notification -->
+    <div class="notification-toast" id="redirectNotification">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>You're being redirected to login page</span>
+    </div>
+
+    <div class="languages-container">
+        <div class="section-header">
+            <h1>Programming Languages</h1>
+            <p>Explore the world's most popular programming languages with interactive visualizations. Discover their strengths, features, and common use cases.</p>
+        </div>
+
+        <div class="languages-grid">
+            <!-- Python Card -->
+            <div class="language-card python">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <div class="card-title">Python</div>
+                </div>
+                
+                <div class="svg-container">
+                    <svg width="180" height="180" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="50" fill="none" stroke="#3776ab" stroke-width="8" />
+                        <path class="python-snake" d="M 70 100 C 85 70, 115 70, 130 100 C 115 130, 85 130, 70 100" 
+                              fill="none" stroke="#3776ab" stroke-width="8" />
+                        <circle cx="85" cy="85" r="10" fill="#3776ab" />
+                        <circle cx="115" cy="115" r="10" fill="#3776ab" />
+                    </svg>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-description">
+                        Python is a high-level, interpreted programming language known for its simplicity and readability. 
+                        It emphasizes code readability with its notable use of significant whitespace.
+                    </div>
+                    
+                    <div class="card-features">
+                        <h3>Key Features:</h3>
+                        <ul class="features-list">
+                            <li>Dynamically typed</li>
+                            <li>Extensive libraries</li>
+                            <li>Multi-paradigm</li>
+                            <li>Automatic memory management</li>
+                            <li>Easy integration with C/C++</li>
+                            <li>Strong community support</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="usage-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">1st</div>
+                            <div class="stat-label">Popularity</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">30.7%</div>
+                            <div class="stat-label">Usage</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1991</div>
+                            <div class="stat-label">Created</div>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" onclick="window.location.href='python-code-solutions.html'">
+                        <i class="fas fa-code"></i> Explore Code
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Java Card -->
+            <div class="language-card java">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fab fa-java"></i>
+                    </div>
+                    <div class="card-title">Java</div>
+                </div>
+                
+                <div class="svg-container">
+                    <svg width="180" height="180" viewBox="0 0 200 200">
+                        <rect x="70" y="70" width="60" height="80" rx="10" fill="#5382a1" />
+                        <rect x="70" y="110" width="60" height="40" rx="10" fill="#f89820" />
+                        <ellipse cx="100" cy="80" rx="20" ry="10" fill="#5382a1" />
+                        <path class="java-cup-steam" d="M 85 50 C 90 40, 110 40, 115 50" 
+                              fill="none" stroke="#777" stroke-width="2" stroke-dasharray="5,5" />
+                        <path class="java-cup-steam" d="M 90 45 C 95 35, 105 35, 110 45" 
+                              fill="none" stroke="#777" stroke-width="2" stroke-dasharray="5,5" />
+                    </svg>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-description">
+                        Java is a class-based, object-oriented programming language designed to have as few implementation dependencies as possible. 
+                        It is intended to let application developers "write once, run anywhere".
+                    </div>
+                    
+                    <div class="card-features">
+                        <h3>Key Features:</h3>
+                        <ul class="features-list">
+                            <li>Platform independence</li>
+                            <li>Object-oriented</li>
+                            <li>Strong memory management</li>
+                            <li>Multi-threaded</li>
+                            <li>High performance</li>
+                            <li>Robust security features</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="usage-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">3rd</div>
+                            <div class="stat-label">Popularity</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">17.5%</div>
+                            <div class="stat-label">Usage</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1995</div>
+                            <div class="stat-label">Created</div>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" onclick="window.location.href='java-code-solutions.html'">
+                        <i class="fas fa-code"></i> Explore Code
+                    </button>
+                </div>
+            </div>
+            
+            <!-- C Card -->
+            <div class="language-card c">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-c"></i>
+                    </div>
+                    <div class="card-title">C Language</div>
+                </div>
+                
+                <div class="svg-container">
+                    <svg width="180" height="180" viewBox="0 0 200 200">
+                        <path d="M 70 70 L 130 70 L 130 130 L 70 130 Z" 
+                              fill="none" stroke="#004482" stroke-width="10" />
+                        <circle class="c-gear" cx="100" cy="100" r="40" fill="none" stroke="#004482" stroke-width="8" stroke-dasharray="10,10" />
+                        <circle cx="100" cy="100" r="20" fill="#004482" />
+                    </svg>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-description">
+                        C is a general-purpose, procedural computer programming language supporting structured programming, 
+                        lexical variable scope, and recursion, with a static type system.
+                    </div>
+                    
+                    <div class="card-features">
+                        <h3>Key Features:</h3>
+                        <ul class="features-list">
+                            <li>Procedural language</li>
+                            <li>Low-level memory access</li>
+                            <li>Minimal runtime</li>
+                            <li>Efficient and fast</li>
+                            <li>Portable assembly</li>
+                            <li>Influenced many languages</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="usage-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">2nd</div>
+                            <div class="stat-label">Popularity</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">16.9%</div>
+                            <div class="stat-label">Usage</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1972</div>
+                            <div class="stat-label">Created</div>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" onclick="window.location.href='c-code-solutions.html'">
+                        <i class="fas fa-code" ></i> Explore Code
+                    </button>
+                </div>
+            </div>
+            
+            <!-- JavaScript Card -->
+            <div class="language-card javascript">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fab fa-js"></i>
+                    </div>
+                    <div class="card-title">JavaScript</div>
+                </div>
+                
+                <div class="svg-container">
+                    <svg width="180" height="180" viewBox="0 0 200 200">
+                        <g class="javascript-bracket">
+                            <path d="M 70 70 L 100 100 L 70 130" 
+                                  fill="none" stroke="#f7df1e" stroke-width="10" />
+                            <path d="M 130 70 L 100 100 L 130 130" 
+                                  fill="none" stroke="#f7df1e" stroke-width="10" />
+                        </g>
+                        <circle cx="100" cy="100" r="40" fill="none" stroke="#f7df1e" stroke-width="3" stroke-dasharray="5,5" />
+                    </svg>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-description">
+                        JavaScript is a high-level, often just-in-time compiled language that conforms to the ECMAScript specification. 
+                        It has dynamic typing, prototype-based object-orientation, and first-class functions.
+                    </div>
+                    
+                    <div class="card-features">
+                        <h3>Key Features:</h3>
+                        <ul class="features-list">
+                            <li>Client-side scripting</li>
+                            <li>Event-driven programming</li>
+                            <li>Asynchronous operations</li>
+                            <li>Multi-paradigm</li>
+                            <li>Dynamic typing</li>
+                            <li>Prototype-based OOP</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="usage-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">1st</div>
+                            <div class="stat-label">Web Usage</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">97.8%</div>
+                            <div class="stat-label">Websites</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1995</div>
+                            <div class="stat-label">Created</div>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" onclick="window.location.href='javascript-code-solutions.html'">
+                        <i class="fas fa-code"></i> Explore Code
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyATnAziN-i_XuipwmNNL54Uo32Lp6gixIo",
+            authDomain: "personal-project-62960.firebaseapp.com",
+            projectId: "personal-project-62960",
+            storageBucket: "personal-project-62960.appspot.com",
+            messagingSenderId: "764447192852",
+            appId: "1:764447192852:web:185a024bcd9a1a504bf401",
+            measurementId: "G-NXDQT7BF8E"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        
+        // Show redirect notification
+        function showRedirectNotification() {
+            const notification = document.getElementById('redirectNotification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 500);
+            }, 3000);
+        }
+        
+        // Check authentication status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            auth.onAuthStateChanged(function(user) {
+                if (!user) {
+                    showRedirectNotification();
+                }
+            });
+            
+            // Mobile menu functionality
+            const mobileMenuButton = document.getElementById('mobileMenuBtn');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.add('active');
+                });
+            }
+            
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            }
+            
+            // Close mobile menu when clicking outside
+            mobileMenuOverlay.addEventListener('click', function(e) {
+                if (e.target === mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.remove('active');
+                }
+            });
+            
+            // Close menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Solutions - CodeMaster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --text: #333333;
+            --background: #ffffff;
+            --card-bg: #f8f9fa;
+            --success: #4CAF50;
+            --error: #e63946;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
+            min-height: 100vh;
+            padding-bottom: 40px;
+            color: var(--text);
+        }
+
+        header {
+            background: var(--gradient);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .primary-button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .primary-button:hover {
+            background: #d9046d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(247, 37, 133, 0.4);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 900px;
+            margin: 120px auto 40px;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+            position: relative;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-title p {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .title-decoration {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        /* Questions Container */
+        .questions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .question-card.active {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--accent);
+        }
+
+        .question-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            transition: background 0.3s ease;
+        }
+
+        .question-header:hover {
+            background: #e0e7ff;
+        }
+
+        .question-header h3 {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question-number {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .question-card.active .toggle-icon {
+            transform: rotate(180deg);
+            color: var(--accent);
+        }
+
+        .solution-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .question-card.active .solution-container {
+            max-height: 1000px;
+        }
+
+        /* Code Editor */
+        .code-editor {
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .editor-header {
+            background: #1e1e1e;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-circles {
+            display: flex;
+            gap: 8px;
+        }
+
+        .circle {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .circle-red {
+            background: #ff5f56;
+        }
+
+        .circle-yellow {
+            background: #ffbd2e;
+        }
+
+        .circle-green {
+            background: #27c93f;
+        }
+
+        .editor-title {
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .code-display {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--primary);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .main-container {
+                margin: 100px 20px 40px;
+            }
+            
+            .question-header {
+                padding: 1rem;
+            }
+            
+            .question-header h3 {
+                font-size: 1rem;
+            }
+            
+            .code-display {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav">
+            <div class="logo-flex">
+                <div class="logo">CodeMaster</div>
+            </div>
+            <button class="primary-button login-btn">
+                <i class="fas fa-sign-in-alt"></i> Hi Coder
+            </button>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <div class="page-title">
+            <h1>JavaScript Code Solutions</h1>
+            <p>Click on any question to view the solution</p>
+            <div class="title-decoration"></div>
+        </div>
+        
+        <div class="questions-container">
+            <!-- Question 1 -->
+            <div class="question-card" id="q1">
+                <div class="question-header">
+                    <h3><span class="question-number">1</span> Reverse a String</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">reverseString.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to reverse a string
+function reverseString(str) {
+    return str.split('').reverse().join('');
+}
+
+// Test the function
+const input = "Hello, JavaScript!";
+const reversed = reverseString(input);
+console.log(`Original: ${input}`);
+console.log(`Reversed: ${reversed}`);
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 2 -->
+            <div class="question-card" id="q2">
+                <div class="question-header">
+                    <h3><span class="question-number">2</span> Check Palindrome</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">isPalindrome.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to check if a string is a palindrome
+function isPalindrome(str) {
+    const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return cleaned === cleaned.split('').reverse().join('');
+}
+
+// Test the function
+const testStr = "A man, a plan, a canal, Panama!";
+const result = isPalindrome(testStr);
+console.log(`"${testStr}" is a palindrome: ${result}`);
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 3 -->
+            <div class="question-card" id="q3">
+                <div class="question-header">
+                    <h3><span class="question-number">3</span> Find Factorial</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">factorial.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to calculate factorial (iterative)
+function factorial(n) {
+    if (n === 0 || n === 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+// Recursive version
+function factorialRecursive(n) {
+    return n <= 1 ? 1 : n * factorialRecursive(n - 1);
+}
+
+// Test the function
+const num = 5;
+console.log(`Factorial of ${num} (iterative): ${factorial(num)}`);
+console.log(`Factorial of ${num} (recursive): ${factorialRecursive(num)}`);
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 4 -->
+            <div class="question-card" id="q4">
+                <div class="question-header">
+                    <h3><span class="question-number">4</span> Fibonacci Sequence</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">fibonacci.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to generate Fibonacci sequence
+function fibonacci(n) {
+    const sequence = [0, 1];
+    for (let i = 2; i < n; i++) {
+        sequence.push(sequence[i - 1] + sequence[i - 2]);
+    }
+    return sequence.slice(0, n);
+}
+
+// Recursive version (less efficient)
+function fibonacciRecursive(n, seq = [0, 1]) {
+    if (n <= seq.length) return seq.slice(0, n);
+    seq.push(seq[seq.length - 1] + seq[seq.length - 2]);
+    return fibonacciRecursive(n, seq);
+}
+
+// Test the function
+const terms = 10;
+console.log(`First ${terms} Fibonacci numbers: ${fibonacci(terms)}`);
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 5 -->
+            <div class="question-card" id="q5">
+                <div class="question-header">
+                    <h3><span class="question-number">5</span> Check Prime Number</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">isPrime.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to check if a number is prime
+function isPrime(n) {
+    if (n <= 1) return false;
+    if (n === 2) return true;
+    if (n % 2 === 0) return false;
+    
+    const sqrt = Math.sqrt(n);
+    for (let i = 3; i <= sqrt; i += 2) {
+        if (n % i === 0) return false;
+    }
+    return true;
+}
+
+// Test the function
+const number = 29;
+console.log(`${number} is prime: ${isPrime(number)}`);
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 6 -->
+            <div class="question-card" id="q6">
+                <div class="question-header">
+                    <h3><span class="question-number">6</span> Count Vowels</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">countVowels.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to count vowels in a string
+function countVowels(str) {
+    const vowels = 'aeiouAEIOU';
+    let count = 0;
+    
+    for (let char of str) {
+        if (vowels.includes(char)) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+// Using regex alternative
+function countVowelsRegex(str) {
+    const matches = str.match(/[aeiou]/gi);
+    return matches ? matches.length : 0;
+}
+
+// Test the function
+const text = "Hello, how are you today?";
+console.log(`Vowel count (loop): ${countVowels(text)}`);
+console.log(`Vowel count (regex): ${countVowelsRegex(text)}`);
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 7 -->
+            <div class="question-card" id="q7">
+                <div class="question-header">
+                    <h3><span class="question-number">7</span> Merge Two Objects</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">mergeObjects.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to merge two objects
+function mergeObjects(obj1, obj2) {
+    // Using spread operator
+    return { ...obj1, ...obj2 };
+}
+
+// Using Object.assign()
+function mergeObjectsAssign(obj1, obj2) {
+    return Object.assign({}, obj1, obj2);
+}
+
+// Test the function
+const obj1 = { a: 1, b: 2 };
+const obj2 = { c: 3, d: 4 };
+console.log("Merged with spread:", mergeObjects(obj1, obj2));
+console.log("Merged with Object.assign:", mergeObjectsAssign(obj1, obj2));
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 8 -->
+            <div class="question-card" id="q8">
+                <div class="question-header">
+                    <h3><span class="question-number">8</span> Array: Squares</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">squareArray.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Using map to create a new array of squares
+function squareArray(arr) {
+    return arr.map(num => num * num);
+}
+
+// Using for loop (traditional approach)
+function squareArrayForLoop(arr) {
+    const result = [];
+    for (let i = 0; i < arr.length; i++) {
+        result.push(arr[i] * arr[i]);
+    }
+    return result;
+}
+
+// Test the function
+const numbers = [1, 2, 3, 4, 5];
+console.log("Squared with map:", squareArray(numbers));
+console.log("Squared with for loop:", squareArrayForLoop(numbers));
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 9 -->
+            <div class="question-card" id="q9">
+                <div class="question-header">
+                    <h3><span class="question-number">9</span> Find Common Elements</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">commonElements.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to find common elements in two arrays
+function findCommon(arr1, arr2) {
+    // Using filter and includes
+    return arr1.filter(value => arr2.includes(value));
+}
+
+// Using Set for better performance with large arrays
+function findCommonSet(arr1, arr2) {
+    const set1 = new Set(arr1);
+    return arr2.filter(value => set1.has(value));
+}
+
+// Test the function
+const arr1 = [1, 2, 3, 4, 5];
+const arr2 = [4, 5, 6, 7, 8];
+console.log("Common elements (filter):", findCommon(arr1, arr2));
+console.log("Common elements (Set):", findCommonSet(arr1, arr2));
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 10 -->
+            <div class="question-card" id="q10">
+                <div class="question-header">
+                    <h3><span class="question-number">10</span> Flatten Nested Array</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">flattenArray.js</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+// Function to flatten a nested array
+function flattenArray(arr) {
+    // Using Array.flat() with Infinity depth
+    return arr.flat(Infinity);
+}
+
+// Using reduce and recursion
+function flattenArrayRecursive(arr) {
+    return arr.reduce((flat, item) => {
+        return flat.concat(Array.isArray(item) ? 
+            flattenArrayRecursive(item) : item);
+    }, []);
+}
+
+// Test the function
+const nested = [1, [2, 3], [4, [5, 6]], 7];
+console.log("Flattened with flat():", flattenArray(nested));
+console.log("Flattened recursively:", flattenArrayRecursive(nested));
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 CodeMaster | JavaScript Solutions Repository</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </footer>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Code copied to clipboard!</span>
+    </div>
+
+    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                auth.onAuthStateChanged(function(user) {
+                    if (!user) {
+                        showRedirectNotification();
+                    }
+                });
+            });
+      
+        // Toggle question solution
+        const questionCards = document.querySelectorAll('.question-card');
+        
+        questionCards.forEach(card => {
+            const header = card.querySelector('.question-header');
+            header.addEventListener('click', () => {
+                // Close all other cards
+                questionCards.forEach(otherCard => {
+                    if (otherCard !== card && otherCard.classList.contains('active')) {
+                        otherCard.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current card
+                card.classList.toggle('active');
+            });
+        });
+        
+        // Copy code to clipboard
+        function copyCode(button) {
+            const code = button.closest('.code-editor').querySelector('.code-display').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification('Code copied to clipboard!');
+            }).catch(err => {
+                showNotification('Failed to copy!');
+                console.error('Failed to copy code:', err);
+            });
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.querySelector('span').textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Expand the first question by default
+        window.addEventListener('load', () => {
+            document.getElementById('q1').classList.add('active');
+        });
+    </script>
+</body>
+</html>

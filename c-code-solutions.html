@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Programming Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2a9d8f;
+            --secondary: #264653;
+            --accent: #e76f51;
+            --light: #f4f9f9;
+            --dark: #2b2d42;
+            --text: #333333;
+            --background: #ffffff;
+            --card-bg: #f8f9fa;
+            --success: #4CAF50;
+            --error: #e63946;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --math-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="20" font-size="14" fill="rgba(42,157,143,0.05)">∫ ∑ ∏</text></svg>');
+        }
+
+        body {
+            background: linear-gradient(135deg, #f4f9f9 0%, #e3f2fd 100%), var(--math-pattern);
+            min-height: 100vh;
+            padding-bottom: 40px;
+            color: var(--text);
+            background-attachment: fixed;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--accent);
+            margin-right: 5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .primary-button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .primary-button:hover {
+            background: #d45a3d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(231, 111, 81, 0.4);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 900px;
+            margin: 120px auto 40px;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-title p {
+            color: var(--primary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        /* Questions Container */
+        .questions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .question-card.active {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .question-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            transition: background 0.3s ease;
+        }
+
+        .question-header:hover {
+            background: #e9f5f4;
+        }
+
+        .question-header h3 {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question-number {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .question-card.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .solution-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .question-card.active .solution-container {
+            max-height: 1000px;
+        }
+
+        /* Code Editor */
+        .code-editor {
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .editor-header {
+            background: #1e1e1e;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .editor-circles {
+            display: flex;
+            gap: 8px;
+        }
+
+        .circle {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .circle-red {
+            background: #ff5f56;
+        }
+
+        .circle-yellow {
+            background: #ffbd2e;
+        }
+
+        .circle-green {
+            background: #27c93f;
+        }
+
+        .editor-title {
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .code-display {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .code-display .keyword {
+            color: #569cd6;
+        }
+
+        .code-display .type {
+            color: #4ec9b0;
+        }
+
+        .code-display .function {
+            color: #dcdcaa;
+        }
+
+        .code-display .comment {
+            color: #6a9955;
+        }
+
+        .code-display .string {
+            color: #ce9178;
+        }
+
+        .code-display .preprocessor {
+            color: #c586c0;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .math-icon {
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        .math-icon-1 {
+            top: 20%;
+            left: 10%;
+        }
+
+        .math-icon-2 {
+            top: 50%;
+            right: 10%;
+            transform: rotate(45deg);
+        }
+
+        .math-icon-3 {
+            bottom: 10%;
+            left: 15%;
+            transform: rotate(90deg);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .main-container {
+                margin: 100px 20px 40px;
+            }
+            
+            .question-header {
+                padding: 1rem;
+            }
+            
+            .question-header h3 {
+                font-size: 1rem;
+            }
+            
+            .code-display {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="math-icon math-icon-1">∑</div>
+    <div class="math-icon math-icon-2">∫</div>
+    <div class="math-icon math-icon-3">∏</div>
+    
+    <header>
+        <nav class="nav">
+            <div class="logo-flex">
+                <div class="logo"><i class="fas fa-square-root-variable"></i>C CodeSolutions</div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <div class="page-title">
+            <h1>C Programming Solutions</h1>
+            <p>Click on any question to view the solution. Each solution includes complete, runnable C code.</p>
+        </div>
+        
+        <div class="questions-container">
+            <!-- Question 1 -->
+            <div class="question-card" id="q1">
+                <div class="question-header">
+                    <h3><span class="question-number">1</span> Hello World Program</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">hello_world.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="comment">// Print "Hello, World!" to the console</span>
+    <span class="function">printf</span>(<span class="string">"Hello, World!\n"</span>);
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 2 -->
+            <div class="question-card" id="q2">
+                <div class="question-header">
+                    <h3><span class="question-number">2</span> Check Even or Odd</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">even_odd.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> num;
+    
+    <span class="comment">// Input a number from user</span>
+    <span class="function">printf</span>(<span class="string">"Enter an integer: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;num);
+    
+    <span class="comment">// Check if the number is even or odd</span>
+    <span class="keyword">if</span>(num % 2 == 0) {
+        <span class="function">printf</span>(<span class="string">"%d is even.\n"</span>, num);
+    } <span class="keyword">else</span> {
+        <span class="function">printf</span>(<span class="string">"%d is odd.\n"</span>, num);
+    }
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 3 -->
+            <div class="question-card" id="q3">
+                <div class="question-header">
+                    <h3><span class="question-number">3</span> Calculate Factorial</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">factorial.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> n, i;
+    <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> factorial = 1;
+
+    <span class="function">printf</span>(<span class="string">"Enter a positive integer: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;n);
+
+    <span class="comment">// Calculate factorial</span>
+    <span class="keyword">for</span>(i = 1; i &lt;= n; ++i) {
+        factorial *= i;
+    }
+
+    <span class="function">printf</span>(<span class="string">"Factorial of %d = %llu\n"</span>, n, factorial);
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 4 -->
+            <div class="question-card" id="q4">
+                <div class="question-header">
+                    <h3><span class="question-number">4</span> Check Prime Number</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">prime_check.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> n, i, flag = 0;
+    
+    <span class="function">printf</span>(<span class="string">"Enter a positive integer: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;n);
+    
+    <span class="comment">// 0 and 1 are not prime numbers</span>
+    <span class="keyword">if</span> (n == 0 || n == 1)
+        flag = 1;
+    
+    <span class="keyword">for</span> (i = 2; i &lt;= n/2; ++i) {
+        <span class="comment">// If n is divisible by i, then n is not prime</span>
+        <span class="keyword">if</span> (n % i == 0) {
+            flag = 1;
+            <span class="keyword">break</span>;
+        }
+    }
+    
+    <span class="comment">// Check and display result</span>
+    <span class="keyword">if</span> (flag == 0)
+        <span class="function">printf</span>(<span class="string">"%d is a prime number.\n"</span>, n);
+    <span class="keyword">else</span>
+        <span class="function">printf</span>(<span class="string">"%d is not a prime number.\n"</span>, n);
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 5 -->
+            <div class="question-card" id="q5">
+                <div class="question-header">
+                    <h3><span class="question-number">5</span> Fibonacci Sequence</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">fibonacci.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> i, n, t1 = 0, t2 = 1, nextTerm;
+    
+    <span class="function">printf</span>(<span class="string">"Enter the number of terms: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;n);
+    
+    <span class="function">printf</span>(<span class="string">"Fibonacci Series: "</span>);
+    
+    <span class="keyword">for</span> (i = 1; i &lt;= n; ++i) {
+        <span class="function">printf</span>(<span class="string">"%d, "</span>, t1);
+        nextTerm = t1 + t2;
+        t1 = t2;
+        t2 = nextTerm;
+    }
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 6 -->
+            <div class="question-card" id="q6">
+                <div class="question-header">
+                    <h3><span class="question-number">6</span> Reverse a Number</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">reverse_number.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> n, reversed = 0, remainder;
+    
+    <span class="function">printf</span>(<span class="string">"Enter an integer: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;n);
+    
+    <span class="comment">// Reverse the number</span>
+    <span class="keyword">while</span> (n != 0) {
+        remainder = n % 10;
+        reversed = reversed * 10 + remainder;
+        n /= 10;
+    }
+    
+    <span class="function">printf</span>(<span class="string">"Reversed number = %d\n"</span>, reversed);
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 7 -->
+            <div class="question-card" id="q7">
+                <div class="question-header">
+                    <h3><span class="question-number">7</span> Palindrome Check</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">palindrome.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+<span class="preprocessor">#include</span> &lt;string.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">char</span> str[100];
+    <span class="type">int</span> i, len, flag = 0;
+    
+    <span class="function">printf</span>(<span class="string">"Enter a string: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%s"</span>, str);
+    
+    len = <span class="function">strlen</span>(str);
+    
+    <span class="comment">// Check if string is palindrome</span>
+    <span class="keyword">for</span> (i = 0; i &lt; len; i++) {
+        <span class="keyword">if</span> (str[i] != str[len - i - 1]) {
+            flag = 1;
+            <span class="keyword">break</span>;
+        }
+    }
+    
+    <span class="keyword">if</span> (flag) {
+        <span class="function">printf</span>(<span class="string">"%s is not a palindrome\n"</span>, str);
+    } <span class="keyword">else</span> {
+        <span class="function">printf</span>(<span class="string">"%s is a palindrome\n"</span>, str);
+    }
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 8 -->
+            <div class="question-card" id="q8">
+                <div class="question-header">
+                    <h3><span class="question-number">8</span> Find Array Sum</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">array_sum.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> n, sum = 0;
+    
+    <span class="function">printf</span>(<span class="string">"Enter number of elements: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;n);
+    
+    <span class="type">int</span> array[n];
+    
+    <span class="comment">// Input array elements</span>
+    <span class="function">printf</span>(<span class="string">"Enter %d integers:\n"</span>, n);
+    <span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; n; i++) {
+        <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;array[i]);
+        sum += array[i]; <span class="comment">// Calculate sum</span>
+    }
+    
+    <span class="function">printf</span>(<span class="string">"Sum = %d\n"</span>, sum);
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 9 -->
+            <div class="question-card" id="q9">
+                <div class="question-header">
+                    <h3><span class="question-number">9</span> Swap Two Numbers</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">swap.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> a, b;
+    
+    <span class="function">printf</span>(<span class="string">"Enter two numbers: "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d %d"</span>, &amp;a, &amp;b);
+    
+    <span class="function">printf</span>(<span class="string">"Before swap: a = %d, b = %d\n"</span>, a, b);
+    
+    <span class="comment">// Swap using a temporary variable</span>
+    <span class="type">int</span> temp = a;
+    a = b;
+    b = temp;
+    
+    <span class="function">printf</span>(<span class="string">"After swap: a = %d, b = %d\n"</span>, a, b);
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 10 -->
+            <div class="question-card" id="q10">
+                <div class="question-header">
+                    <h3><span class="question-number">10</span> Find Largest Number</h3>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="solution-container">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <div class="editor-left">
+                                <div class="editor-circles">
+                                    <span class="circle circle-red"></span>
+                                    <span class="circle circle-yellow"></span>
+                                    <span class="circle circle-green"></span>
+                                </div>
+                                <span class="editor-title">largest.c</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-display">
+<span class="preprocessor">#include</span> &lt;stdio.h&gt;
+
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">int</span> n;
+    <span class="type">float</span> arr[100];
+    
+    <span class="function">printf</span>(<span class="string">"Enter the number of elements (1 to 100): "</span>);
+    <span class="function">scanf</span>(<span class="string">"%d"</span>, &amp;n);
+    
+    <span class="comment">// Store number entered by the user</span>
+    <span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; n; ++i) {
+        <span class="function">printf</span>(<span class="string">"Enter number %d: "</span>, i+1);
+        <span class="function">scanf</span>(<span class="string">"%f"</span>, &amp;arr[i]);
+    }
+    
+    <span class="comment">// Find the largest number</span>
+    <span class="keyword">for</span>(<span class="type">int</span> i = 1; i &lt; n; ++i) {
+        <span class="keyword">if</span>(arr[0] &lt; arr[i])
+            arr[0] = arr[i];
+    }
+    
+    <span class="function">printf</span>(<span class="string">"Largest element = %.2f\n"</span>, arr[0]);
+    
+    <span class="keyword">return</span> 0;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Code copied to clipboard!</span>
+    </div>
+
+    <script>
+        // Add to top of each service page
+            document.addEventListener('DOMContentLoaded', function() {
+                auth.onAuthStateChanged(function(user) {
+                    if (!user) {
+                        showRedirectNotification();
+                    }
+                });
+            });
+                    // Toggle question solution
+        const questionCards = document.querySelectorAll('.question-card');
+        
+        questionCards.forEach(card => {
+            const header = card.querySelector('.question-header');
+            header.addEventListener('click', () => {
+                // Close all other cards
+                questionCards.forEach(otherCard => {
+                    if (otherCard !== card && otherCard.classList.contains('active')) {
+                        otherCard.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current card
+                card.classList.toggle('active');
+            });
+        });
+        
+        // Copy code to clipboard
+        function copyCode(button) {
+            const editor = button.closest('.code-editor');
+            const codeDisplay = editor.querySelector('.code-display');
+            const code = codeDisplay.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification('Code copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy code:', err);
+                showNotification('Failed to copy code!');
+            });
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.querySelector('span').textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Expand the first question by default
+        window.addEventListener('load', () => {
+            document.getElementById('q1').classList.add('active');
+        });
+    </script>
+</body>
+</html>
